@@ -128,8 +128,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# IntelliJ project files
+# IDE
 .idea/
+.vscode/
 
 # OS
 .DS_Store

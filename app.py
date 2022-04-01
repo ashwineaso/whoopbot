@@ -1,58 +1,12 @@
-import logging
-import os
-
 from fastapi import FastAPI, Request
-from slack_bolt.adapter.fastapi.async_handler import AsyncSlackRequestHandler
-from slack_bolt.app.async_app import AsyncApp
-from slack_bolt.oauth.async_oauth_settings import AsyncOAuthSettings
-from slack_sdk.oauth.installation_store import FileInstallationStore
-from slack_sdk.oauth.state_store import FileOAuthStateStore
+from slack_bolt.adapter.starlette.async_handler import AsyncSlackRequestHandler
 
-from whoopbot import models
-from whoopbot.command import handle_command
+from whoopbot import app, models
 from whoopbot.db import engine
 
-logging.basicConfig(level=logging.DEBUG)
-
-oauth_settings = AsyncOAuthSettings(
-    client_id=os.environ["SLACK_CLIENT_ID"],
-    client_secret=os.environ["SLACK_CLIENT_SECRET"],
-    scopes=["channels:read", "groups:read", "chat:write"],
-    installation_store=FileInstallationStore(base_dir="./data/installations"),
-    state_store=FileOAuthStateStore(
-        expiration_seconds=600,
-        base_dir="./data/states"
-    )
-)
-
-app = AsyncApp(
-    signing_secret=os.environ["SLACK_SIGNING_SECRET"],
-    oauth_settings=oauth_settings
-)
+models.Base.metadata.create_all(bind=engine)
 
 app_handler = AsyncSlackRequestHandler(app)
-
-
-@app.event("app_mention")
-async def handle_app_mentions(body, say, logger):
-    logger.info(body)
-    await say("What's up?")
-
-
-@app.event("message")
-async def handle_message(body, say, logger):
-    logger.info(body)
-    await say("Hello!")
-
-
-@app.command("/whoop")
-async def command_whoop(ack, body, respond):
-    await ack()
-    response = await handle_command(body)
-    await respond(response)
-
-
-models.Base.metadata.create_all(bind=engine)
 
 api = FastAPI()
 

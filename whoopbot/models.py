@@ -19,6 +19,7 @@ class GUID(TypeDecorator):
     """
     Platform independent GUID type uses CHAR(32) stored as string hex values.
     """
+
     impl = CHAR
 
     def load_dialect_impl(self, dialect):
