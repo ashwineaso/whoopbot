@@ -8,6 +8,8 @@ from slack_bolt.oauth.async_oauth_settings import AsyncOAuthSettings
 from slack_sdk.oauth.installation_store import FileInstallationStore
 from slack_sdk.oauth.state_store import FileOAuthStateStore
 
+from whoopbot.command import handle_command
+
 logging.basicConfig(level=logging.DEBUG)
 
 oauth_settings = AsyncOAuthSettings(
@@ -41,7 +43,8 @@ async def handle_message(body, say, logger):
 @app.command("/whoop")
 async def command_whoop(ack, body, respond):
     await ack()
-    await respond(f"Hi <@{body['user_id']}>!")
+    response = await handle_command(body)
+    await respond(response)
 
 
 api = FastAPI()
