@@ -1,3 +1,5 @@
+from slack_bolt.adapter.starlette.async_handler import AsyncSlackRequestHandler
+
 from whoopbot import app
 from whoopbot.command import handle_command
 
@@ -19,3 +21,6 @@ async def command_whoop(ack, body, respond):
     await ack()
     response = await handle_command(body)
     await respond(response)
+
+
+app_handler = AsyncSlackRequestHandler(app)

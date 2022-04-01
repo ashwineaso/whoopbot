@@ -1,12 +1,10 @@
 from fastapi import FastAPI, Request
-from slack_bolt.adapter.starlette.async_handler import AsyncSlackRequestHandler
 
-from whoopbot import app, models
+from whoopbot import models
 from whoopbot.db import engine
+from whoopbot.handlers import app_handler
 
 models.Base.metadata.create_all(bind=engine)
-
-app_handler = AsyncSlackRequestHandler(app)
 
 api = FastAPI()
 
