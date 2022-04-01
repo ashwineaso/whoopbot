@@ -137,3 +137,4 @@ dmypy.json
 # Misc
 *.swp
 /data/
+*.db

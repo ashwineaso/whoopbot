@@ -8,7 +8,9 @@ from slack_bolt.oauth.async_oauth_settings import AsyncOAuthSettings
 from slack_sdk.oauth.installation_store import FileInstallationStore
 from slack_sdk.oauth.state_store import FileOAuthStateStore
 
+from whoopbot import models
 from whoopbot.command import handle_command
+from whoopbot.db import engine
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -17,7 +19,10 @@ oauth_settings = AsyncOAuthSettings(
     client_secret=os.environ["SLACK_CLIENT_SECRET"],
     scopes=["channels:read", "groups:read", "chat:write"],
     installation_store=FileInstallationStore(base_dir="./data/installations"),
-    state_store=FileOAuthStateStore(expiration_seconds=600, base_dir="./data/states")
+    state_store=FileOAuthStateStore(
+        expiration_seconds=600,
+        base_dir="./data/states"
+    )
 )
 
 app = AsyncApp(
@@ -46,6 +51,8 @@ async def command_whoop(ack, body, respond):
     response = await handle_command(body)
     await respond(response)
 
+
+models.Base.metadata.create_all(bind=engine)
 
 api = FastAPI()
 
