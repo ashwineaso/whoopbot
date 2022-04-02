@@ -1,7 +1,7 @@
 from slack_bolt.adapter.starlette.async_handler import AsyncSlackRequestHandler
 
-from whoopbot import app
 from whoopbot.command import handle_command
+from whoopbot.whoopbot import app
 
 
 @app.event("app_mention")

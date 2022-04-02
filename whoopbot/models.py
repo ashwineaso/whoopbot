@@ -40,14 +40,15 @@ class GUID(TypeDecorator):
         return value
 
 
-class OrgResources(Base):
+class OrgResource(Base):
     """
     Table of resources for an organization.
     """
 
     __tablename__ = 'org_resources'
 
-    id = Column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()), index=True)
+    id = Column(GUID(), primary_key=True,
+                default=lambda: str(uuid.uuid4()), index=True)
     resource_name = Column(String(255), nullable=False)
     environment = Column(String(255), nullable=True)
 
@@ -60,10 +61,10 @@ class LockedResource(Base):
     __tablename__ = 'locked_resources'
 
     id = Column(Integer, primary_key=True, index=True)
-    resource_id = Column(GUID(), ForeignKey('org_resources.id'),
-                         nullable=False, index=True)
+    org_resource_id = Column(GUID(), ForeignKey('org_resources.id'),
+                             nullable=False, index=True)
     locked_at = Column(DateTime, nullable=False, default=current_timestamp())
     expires_at = Column(DateTime, nullable=False)
 
-    resource = relationship('OrgResources', backref='locked_resources')
+    resource = relationship('OrgResource', backref='locked_resources')
 

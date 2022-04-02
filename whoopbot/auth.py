@@ -16,7 +16,7 @@ from slack_sdk.oauth.state_store.async_state_store import AsyncOAuthStateStore
 from slack_sdk.oauth.state_store.sqlalchemy import SQLAlchemyOAuthStateStore
 from sqlalchemy import and_, desc, Table, MetaData
 
-from whoopbot.db import SQLALCHEMY_DATABASE_URL
+from whoopbot.db import SQLALCHEMY_DATABASE_URL, engine
 
 
 class AsyncSQLAlchemyInstallationStore(AsyncInstallationStore):
@@ -150,7 +150,7 @@ logger = logging.getLogger(__name__)
 
 
 installation_store = AsyncSQLAlchemyInstallationStore(
-    client_id=os.environ["SLACK_CLIENT_ID"],
+    client_id=os.getenv("SLACK_CLIENT_ID"),
     database_url=SQLALCHEMY_DATABASE_URL,
     logger=logger,
 )
@@ -159,3 +159,7 @@ oauth_state_store = AsyncSQLAlchemyOAuthStateStore(
     database_url=SQLALCHEMY_DATABASE_URL,
     logger=logger,
 )
+
+
+installation_store.metadata.create_all(engine)
+oauth_state_store.metadata.create_all(engine)

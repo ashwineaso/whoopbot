@@ -1,8 +1,11 @@
+from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 
 from whoopbot import models
 from whoopbot.db import engine
 from whoopbot.handlers import app_handler
+
+load_dotenv()
 
 models.Base.metadata.create_all(bind=engine)
 
