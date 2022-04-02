@@ -3,7 +3,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/ashwineaso/whoopbot)](https://github.com/ashwineaso/whoopbot/issues)
 ![GitHub](https://img.shields.io/github/license/ashwineaso/whoopbot)
 [![Coverage Status](https://coveralls.io/repos/github/ashwineaso/whoopbot/badge.svg?branch=main)](https://coveralls.io/github/ashwineaso/whoopbot?branch=main)
-
+[![Python package](https://github.com/ashwineaso/whoopbot/actions/workflows/config.yml/badge.svg?branch=main)](https://github.com/ashwineaso/whoopbot/actions/workflows/config.yml)
 ## Overview
 
 Whoopbot provides a virtual lock on your resources, so that it's used by one person at a time.
