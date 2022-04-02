@@ -4,7 +4,8 @@ from typing import List
 
 class Action:
 
-    def __init__(self, params: List[str]):
+    def __init__(self, user_id: str, params: List[str]):
+        self.user_id = user_id
         self.params = params
 
     @abstractmethod

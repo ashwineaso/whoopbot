@@ -139,11 +139,10 @@ class AsyncSQLAlchemyOAuthStateStore(AsyncOAuthStateStore):
                         self.oauth_states.delete().where(c.id == row["id"])
                     )
                     return True
-            return False
         except Exception as e:
             message = f"Failed to find any persistent data for state: {state} - {e}"
             self.logger.warning(message)
-            return False
+        return False
 
 
 logger = logging.getLogger(__name__)

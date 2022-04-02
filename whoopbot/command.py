@@ -3,10 +3,12 @@ from whoopbot.actions import ACTION_MAP
 
 async def handle_command(command_body) -> str:
     """Parse the command and return the appropriate response."""
-    return parse_command(command_body['text'])
+    return parse_command(
+        user_id=command_body['user_id'],
+        command_text=command_body['text'])
 
 
-def parse_command(command_text: str) -> str:
+def parse_command(user_id: str, command_text: str) -> str:
     """Parse the command text and build a command object."""
 
     params = command_text.split(" ")
@@ -17,5 +19,5 @@ def parse_command(command_text: str) -> str:
     if action_text not in ACTION_MAP:
         return f"Invalid action: {action_text} :fire:"
 
-    action = ACTION_MAP[action_text](params[1:])
+    action = ACTION_MAP[action_text](user_id, params[1:])
     return action.process()
