@@ -1,4 +1,9 @@
+from typing import List
+
+from sqlalchemy.orm import Session
+
 from whoopbot.actions.base import Action
+from whoopbot.models import LockedResource, OrgResource
 
 
 class DeleteAction(Action):
@@ -42,3 +47,38 @@ class DeleteAction(Action):
             return self.DEFAULT_MESSAGE
 
         return "processing delete action"
+
+
+def process_delete_action(db: Session, params: List[str]) -> str:
+    """Delete the resource from the database."""
+
+    default_environment = "Default"
+    # Parse the params of the action
+    environment = default_environment
+    if len(params) == 2:
+        _, resource_name = params
+    else:
+        _, resource_name, _, environment = params
+
+    # Check if the resource exists for the environment
+    resource = db.query(OrgResource).filter(
+        OrgResource.resource_name == resource_name,
+        OrgResource.environment == environment).first()
+
+    if not resource:
+        return f"Resource {resource_name} not found " \
+               f"for {environment} environment"
+
+    # Check if the resource is currently locked by an owner
+    locked_resource = db.query(LockedResource).filter(
+        LockedResource.org_resource_id == resource.id).first()
+
+    if locked_resource:
+        return f"Resource {resource_name} for {environment} environment" \
+               f"is currently locked by {locked_resource.owner_id}"
+
+    # Delete the resource if it is present and not locked
+    db.delete(resource)
+    db.commit()
+
+    return f"Resource {resource_name} for {environment} environment deleted"

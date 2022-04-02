@@ -5,7 +5,6 @@ from sqlalchemy import (
     Column,
     DateTime,
     ForeignKey,
-    Integer,
     String,
     TypeDecorator
 )
@@ -52,6 +51,9 @@ class OrgResource(Base):
     resource_name = Column(String(255), nullable=False)
     environment = Column(String(255), nullable=True)
 
+    def to_string(self):
+        return f"{self.resource_name} - {self.environment}"
+
 
 class LockedResource(Base):
     """
@@ -60,11 +62,13 @@ class LockedResource(Base):
 
     __tablename__ = 'locked_resources'
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(GUID(), primary_key=True,
+                default=lambda: str(uuid.uuid4()), index=True)
     org_resource_id = Column(GUID(), ForeignKey('org_resources.id'),
                              nullable=False, index=True)
+    owner_id = Column(String(255), nullable=False)
     locked_at = Column(DateTime, nullable=False, default=current_timestamp())
     expires_at = Column(DateTime, nullable=False)
 
-    resource = relationship('OrgResource', backref='locked_resources')
+    org_resource = relationship('OrgResource', backref='locked_resources')
 

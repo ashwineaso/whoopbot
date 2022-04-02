@@ -51,7 +51,7 @@ def test_add_new_env_over_existing_default(db_session):
     """
     Test adding a resource to an environment that is not the default.
     """
-    params = ["resource", "service_name", "for", "environment"]
+    params = ["resource", "service_name"]
 
     org_resource = OrgResource(
         resource_name=params[1],

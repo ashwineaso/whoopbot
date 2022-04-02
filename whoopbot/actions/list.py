@@ -1,4 +1,8 @@
+from sqlalchemy.orm import Session
+
 from whoopbot.actions.base import Action
+from whoopbot.db import SessionLocal
+from whoopbot.models import OrgResource
 
 
 class ListAction(Action):
@@ -21,4 +25,18 @@ class ListAction(Action):
         if not self.is_valid():
             return self.DEFAULT_MESSAGE
 
-        return "processing list resources"
+        return process_list_resources(SessionLocal())
+
+
+def process_list_resources(db: Session) -> str:
+    """
+    Return a list of resources added by the organization
+    """
+
+    resources_list = db.query(OrgResource).all()
+    if not list(resources_list):
+        return "No resources added yet"
+
+    return "Resources added by the organization:\n" + \
+           "\n".join(["• " + resource.to_string()
+                      for resource in resources_list])

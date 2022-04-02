@@ -3,6 +3,7 @@ from typing import List
 from sqlalchemy.orm import Session
 
 from whoopbot.actions.base import Action
+from whoopbot.db import SessionLocal
 from whoopbot.models import OrgResource
 
 
@@ -18,7 +19,7 @@ class AddAction(Action):
 
     DEFAULT_MESSAGE = (
         "The command to add resources is "
-        "`/whoop add resources <resource_name> <environment: optional>`")
+        "`/whoop add resource <resource_name> for <environment: optional>`")
 
     def should_contain_only_service(self) -> bool:
         if len(self.params) == 2:
@@ -46,7 +47,7 @@ class AddAction(Action):
         if not self.is_valid():
             return self.DEFAULT_MESSAGE
 
-        return "processing add action"
+        return process_action(SessionLocal(), self.params)
 
 
 def process_action(db: Session, params: List[str]) -> str:
