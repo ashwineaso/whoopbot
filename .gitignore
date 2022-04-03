@@ -139,3 +139,4 @@ dmypy.json
 *.swp
 /data/
 *.db
+node_modules/
