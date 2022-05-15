@@ -2,11 +2,10 @@ import os
 from datetime import datetime
 
 from pynamodb.attributes import UnicodeAttribute, UTCDateTimeAttribute
+from pynamodb.models import Model
 
-from whoopbot.db import Base
 
-
-class OrgResource(Base):
+class OrgResource(Model):
     """
     Table of resources for an organization.
     """
@@ -22,7 +21,7 @@ class OrgResource(Base):
         region = os.getenv('AWS_REGION')
 
 
-class LockedResource(Base):
+class LockedResource(Model):
     """
     Table of locked resources for an organization.
     """

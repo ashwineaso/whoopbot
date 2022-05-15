@@ -3,6 +3,8 @@ import logging
 from chalice import Chalice, Response
 from slack_bolt.adapter.aws_lambda.chalice_handler import ChaliceSlackRequestHandler
 
+from whoopbot.handlers import bolt_app
+
 ChaliceSlackRequestHandler.clear_all_log_handlers()
 logging.basicConfig(format="%(asctime)s %(message)s", level=logging.DEBUG)
 
@@ -17,7 +19,7 @@ slack_handler = ChaliceSlackRequestHandler(app=bolt_app, chalice=app)
     content_types=["application/x-www-form-urlencoded", "application/json"],
 )
 def events() -> Response:
-    return app_handler.handle(app.current_request)
+    return slack_handler.handle(app.current_request)
 
 
 @app.route("/slack/install", methods=["GET"])
