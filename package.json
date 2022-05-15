@@ -1,8 +1,0 @@
-{
-    "name": "whoopbot-service",
-    "version": "1.0.0",
-    "author": "Ashwin Easo",
-    "dependencies": {
-        "serverless-python-requirements": "^5.0.1"
-    }
-}

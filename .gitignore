@@ -140,3 +140,4 @@ dmypy.json
 /data/
 *.db
 node_modules/
+.envrc

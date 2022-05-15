@@ -69,6 +69,12 @@ You can lock the same resource multiple times, but with different environments, 
 Resources which have been added are unlocked using the command: `/whoop unlock <resource> <environment:optional>`.
 You can only unlock the resource which have been locked by you.
 
+### Installation and Running
+
+1. Install the requirements from the `requirements.txt` file
+2. Run a docker container with the local version of dynamodb (`amazon/dynamodb-local`)
+3. Run the command to start the server 
+
 ## Contributing
 
 Please feel free to contribute to the project ❤️

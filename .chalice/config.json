@@ -1,0 +1,19 @@
+{
+  "version": "2.0",
+  "app_name": "whoopbot",
+  "stages": {
+    "dev": {
+      "api_gateway_stage": "api",
+      "environment_variables": {
+        "SLACK_SIGNING_SECRET": "383d82ccf5f0ffdc2426cdf15f723034",
+        "SLACK_CLIENT_ID": "3334067512816.3307430893925",
+        "SLACK_CLIENT_SECRET": "af075c1550868ee24fa71c5033233a6b",
+        "SLACK_SCOPES": "app_mentions:read,channels:history,im:history,chat:write",
+        "SLACK_INSTALLATION_S3_BUCKET_NAME": "whoopbot-slack-auth",
+        "SLACK_STATE_S3_BUCKET_NAME": "whoopbot-slack-state"
+      },
+      "manage_iam_role": false,
+      "iam_role_arn": "arn:aws:iam::713370363613:role/IAM-Role-Whoopbot"
+    }
+  }
+}
