@@ -1,9 +1,8 @@
 from typing import List
 
-from sqlalchemy.orm import Session
+from pynamodb.exceptions import DoesNotExist
 
 from whoopbot.actions.base import Action
-from whoopbot.db import SessionLocal
 from whoopbot.models import LockedResource, OrgResource
 
 
@@ -35,11 +34,10 @@ class ReleaseAction(Action):
         if not self.is_valid():
             return self.DEFAULT_MESSAGE
 
-        return process_release_action(SessionLocal(), self.user_id, self.params)
+        return process_release_action(self.user_id, self.params)
 
 
-def process_release_action(
-        db: Session, user_id: str, params: List[str]) -> str:
+def process_release_action(user_id: str, params: List[str]) -> str:
 
     if len(params) == 1:
         resource_name, environment = params[0], "Default"
@@ -47,17 +45,20 @@ def process_release_action(
         resource_name, environment = params[0], params[1]
 
     # Check if the resource exists for the environment
-    resource = db.query(OrgResource).filter(
-        OrgResource.resource_name == resource_name,
-        OrgResource.environment == environment).first()
+    try:
+        resource = OrgResource.get(resource_name, environment)
+    except DoesNotExist:
+        resource = None
 
     if not resource:
         return f"Resource {resource_name} not found " \
                f"for {environment} environment"
 
     # Check if resource is already locked
-    locked_resource = db.query(LockedResource).filter(
-        LockedResource.org_resource_id == resource.id).first()
+    try:
+        locked_resource = LockedResource.get(resource_name, environment)
+    except DoesNotExist:
+        locked_resource = None
 
     if not locked_resource:
         return f"Resource {resource_name} for {environment} environment " \
@@ -68,8 +69,7 @@ def process_release_action(
                f"is locked by {locked_resource.owner_id}. You can't release it"
 
     # Release the resource
-    db.delete(locked_resource)
-    db.commit()
+    locked_resource.delete()
 
     return f"{locked_resource.owner_id} has released {resource_name} " \
            f"for {environment} environment"

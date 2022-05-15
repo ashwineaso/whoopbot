@@ -1,5 +1,6 @@
 from typing import List
 
+from pynamodb.exceptions import DoesNotExist
 from sqlalchemy.orm import Session
 
 from whoopbot.actions.base import Action
@@ -61,24 +62,26 @@ def process_delete_action(db: Session, params: List[str]) -> str:
         _, resource_name, _, environment = params
 
     # Check if the resource exists for the environment
-    resource = db.query(OrgResource).filter(
-        OrgResource.resource_name == resource_name,
-        OrgResource.environment == environment).first()
+    try:
+        org_resource = OrgResource.get(resource_name, environment)
+    except DoesNotExist:
+        org_resource = None
 
-    if not resource:
+    if not org_resource:
         return f"Resource {resource_name} not found " \
                f"for {environment} environment"
 
     # Check if the resource is currently locked by an owner
-    locked_resource = db.query(LockedResource).filter(
-        LockedResource.org_resource_id == resource.id).first()
+    try:
+        locked_resource = LockedResource.get(resource_name, environment)
+    except DoesNotExist:
+        locked_resource = None
 
     if locked_resource:
         return f"Resource {resource_name} for {environment} environment" \
                f"is currently locked by {locked_resource.owner_id}"
 
     # Delete the resource if it is present and not locked
-    db.delete(resource)
-    db.commit()
+    org_resource.delete()
 
     return f"Resource {resource_name} for {environment} environment deleted"

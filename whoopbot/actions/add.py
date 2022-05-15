@@ -1,9 +1,6 @@
 from typing import List
 
-from sqlalchemy.orm import Session
-
 from whoopbot.actions.base import Action
-from whoopbot.db import SessionLocal
 from whoopbot.models import OrgResource
 
 
@@ -47,10 +44,10 @@ class AddAction(Action):
         if not self.is_valid():
             return self.DEFAULT_MESSAGE
 
-        return process_action(SessionLocal(), self.params)
+        return process_action(self.params)
 
 
-def process_action(db: Session, params: List[str]) -> str:
+def process_action(params: List[str]) -> str:
     """Process the action and return the result of it."""
 
     default_environment = "Default"
@@ -61,7 +58,7 @@ def process_action(db: Session, params: List[str]) -> str:
     else:
         _, resource_name, _, environment = params
 
-    resources_list: List[OrgResource] = fetch_resource(db, resource_name)
+    resources_list: List[OrgResource] = fetch_resource(resource_name)
 
     resource = None
     for each in resources_list:
@@ -72,7 +69,7 @@ def process_action(db: Session, params: List[str]) -> str:
     # if the resource is not found for the environment,
     # add the resource to the database for the new environment
     if not (resources_list and resource):
-        return create_new_resource(db, resource_name, environment)
+        return create_new_resource(resource_name, environment)
 
     # If the resource exists for the default environment,
     # the return the message to the user asking them to remove the resource
@@ -87,16 +84,16 @@ def process_action(db: Session, params: List[str]) -> str:
            f"for {resource.environment} environment"
 
 
-def fetch_resource(db: Session, resource_name: str):
+def fetch_resource(resource_name: str) -> List[OrgResource]:
     # Check if the resource exists already for the environment
-    return db.query(OrgResource).filter(
-        OrgResource.resource_name == resource_name).all()
+    return list(OrgResource.query(resource_name))
 
 
-def create_new_resource(db: Session, resource_name: str, environment: str):
+def create_new_resource(resource_name: str, environment: str):
     # Create a new resource for the environment
-    resource = OrgResource(resource_name=resource_name, environment=environment)
-    db.add(resource)
-    db.commit()
+    resource = OrgResource(
+        resource_name=resource_name,
+        environment=environment)
+    resource.save()
     return f"Resource {resource_name} added to {environment} environment"
 
