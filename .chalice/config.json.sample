@@ -1,0 +1,19 @@
+{
+  "version": "2.0",
+  "app_name": "whoopbot",
+  "stages": {
+    "dev": {
+      "api_gateway_stage": "api",
+      "environment_variables": {
+        "SLACK_SIGNING_SECRET": "xxx",
+        "SLACK_CLIENT_ID": "xxx.xxx",
+        "SLACK_CLIENT_SECRET": "xxx",
+        "SLACK_SCOPES": "app_mentions:read,channels:history,im:history,chat:write",
+        "SLACK_INSTALLATION_S3_BUCKET_NAME": "xxx",
+        "SLACK_STATE_S3_BUCKET_NAME": "xxx"
+      },
+      "manage_iam_role": false,
+      "iam_role_arn": "arn:aws:iam::xxx:role/xxx"
+    }
+  }
+}

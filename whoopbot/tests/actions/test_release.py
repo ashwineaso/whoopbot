@@ -5,7 +5,7 @@ from whoopbot.actions.release import process_release_action
 from whoopbot.models import LockedResource, OrgResource
 
 
-def test_release_locked_resource(db_session):
+def test_release_locked_resource():
     """
     Test releasing a locked resource
     """
@@ -15,30 +15,28 @@ def test_release_locked_resource(db_session):
         resource_name="resource_name",
         environment="environment",
     )
-    db_session.add(org_resource)
-    db_session.commit()
-
-    db_session.refresh(org_resource)
+    org_resource.save()
+    org_resource.refresh()
 
     locked_resource = LockedResource(
+        resource_name=org_resource.resource_name,
+        environment=org_resource.environment,
         owner_id=user_id,
-        org_resource_id=org_resource.id,
         locked_at=datetime.datetime.utcnow(),
         expires_at=datetime.datetime.utcnow(),
     )
-    db_session.add(locked_resource)
-    db_session.commit()
+    locked_resource.save()
 
     params = ["resource_name", "environment"]
 
-    result = process_release_action(db_session, user_id, params)
+    result = process_release_action(user_id, params)
     expected_result = (f"{user_id} has released resource_name "
                        f"for environment environment")
 
     assert result == expected_result
 
 
-def test_failed_due_lock_by_diff_user(db_session):
+def test_failed_due_lock_by_diff_user():
     """
     Test failure due to resource being locked by different user
     """
@@ -50,23 +48,21 @@ def test_failed_due_lock_by_diff_user(db_session):
         resource_name="resource_name",
         environment="environment",
     )
-    db_session.add(org_resource)
-    db_session.commit()
-
-    db_session.refresh(org_resource)
+    org_resource.save()
+    org_resource.refresh()
 
     locked_resource = LockedResource(
+        resource_name=org_resource.resource_name,
+        environment=org_resource.environment,
         owner_id=user_id_2,
-        org_resource_id=org_resource.id,
         locked_at=datetime.datetime.utcnow(),
         expires_at=datetime.datetime.utcnow(),
     )
-    db_session.add(locked_resource)
-    db_session.commit()
+    locked_resource.save()
 
     params = ["resource_name", "environment"]
 
-    result = process_release_action(db_session, user_id, params)
+    result = process_release_action(user_id, params)
     expected_result = (
             f"Resource resource_name for environment environment "
             f"is locked by {user_id_2}. You can't release it"

@@ -50,7 +50,7 @@ class DeleteAction(Action):
         return "processing delete action"
 
 
-def process_delete_action(db: Session, params: List[str]) -> str:
+def process_delete_action(params: List[str]) -> str:
     """Delete the resource from the database."""
 
     default_environment = "Default"
@@ -78,7 +78,7 @@ def process_delete_action(db: Session, params: List[str]) -> str:
         locked_resource = None
 
     if locked_resource:
-        return f"Resource {resource_name} for {environment} environment" \
+        return f"Resource {resource_name} for {environment} environment " \
                f"is currently locked by {locked_resource.owner_id}"
 
     # Delete the resource if it is present and not locked

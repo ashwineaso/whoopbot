@@ -1,33 +1,18 @@
 import pytest
-from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
 
-from whoopbot import models
+from whoopbot.models import OrgResource, LockedResource
 
 
-@pytest.fixture(scope="session")
-def connection():
-    engine = create_engine("sqlite:///:memory:")
-    return engine.connect()
-
-
-@pytest.fixture(scope="session")
-def setup_database(connection):
+@pytest.fixture(scope="function", autouse=True)
+def setup_database():
     """Setup test database.
 
     Creates all database tables as declared in SQLAlchemy models,
     then proceeds to drop all the created tables after all tests
     have finished running.
     """
-    models.Base.metadata.bind = connection
-    models.Base.metadata.create_all()
+    OrgResource.create_table(read_capacity_units=1, write_capacity_units=1)
+    LockedResource.create_table(read_capacity_units=1, write_capacity_units=1)
     yield
-    models.Base.metadata.drop_all()
-
-
-@pytest.fixture()
-def db_session(setup_database, connection):
-    transaction = connection.begin()
-    yield scoped_session(
-        sessionmaker(autocommit=False, autoflush=False, bind=connection))
-    transaction.rollback()
+    OrgResource.delete_table()
+    LockedResource.delete_table()

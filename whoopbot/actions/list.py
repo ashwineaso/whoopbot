@@ -32,7 +32,7 @@ def process_list_resources() -> str:
 
     resources_list = list(OrgResource.scan())
 
-    if not len(resources_list) == 0:
+    if len(resources_list) == 0:
         return "No resources added yet"
 
     return "Resources added by the organization:\n" + \

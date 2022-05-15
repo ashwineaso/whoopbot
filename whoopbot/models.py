@@ -19,6 +19,7 @@ class OrgResource(Model):
     class Meta:
         table_name = 'org_resources'
         region = os.getenv('AWS_REGION')
+        host = os.getenv('DYNAMODB_HOST')
 
 
 class LockedResource(Model):
@@ -35,4 +36,4 @@ class LockedResource(Model):
     class Meta:
         table_name = 'locked_resources'
         region = os.getenv('AWS_REGION')
-
+        host = os.getenv('DYNAMODB_HOST')
